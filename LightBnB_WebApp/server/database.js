@@ -207,11 +207,11 @@ exports.getAllReservations = getAllReservations;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = function(options, limit = 10) {
-  return pool.query(`
-  SELECT * FROM properties
-  LIMIT $1
-  `, [limit])
-  .then(res => res.rows);
+  const limitedProperties = {};
+  for (let i = 1; i <= limit; i++) {
+    limitedProperties[i] = properties[i];
+  }
+  return Promise.resolve(limitedProperties);
 }
 exports.getAllProperties = getAllProperties;
 /**
@@ -225,4 +225,8 @@ const addProperty = function(property) {
   properties[propertyId] = property;
   return Promise.resolve(property);
 }
+<<<<<<< HEAD
 exports.addProperty = addProperty;
+=======
+exports.addProperty = addProperty;
+>>>>>>> parent of 654bf50... run eslint
