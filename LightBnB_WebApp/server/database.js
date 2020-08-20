@@ -16,18 +16,24 @@ const pool = new Pool({
  * @param {String} email The email of the user.
  * @return {Promise<{}>} A promise to the user.
  */
+
+
 const getUserWithEmail = function(email) {
-  let user;
-  for (const userId in users) {
-    user = users[userId];
-    if (user.email.toLowerCase() === email.toLowerCase()) {
-      break;
-    } else {
-      user = null;
-    }
-  }
-  return Promise.resolve(user);
-}
+  const userEmailQuery = `SELECT * FROM users WHERE email = $1`;
+  return pool.query(userEmailQuery, [email])
+    .then(res => res ? res.rows[0] : null)
+    .catch(err => console.err('Query error', err));
+  // let user;
+  // for (const userId in users) {
+  //   user = users[userId];
+  //   if (user.email.toLowerCase() === email.toLowerCase()) {
+  //     break;
+  //   } else {
+  //     user = null;
+  //   }
+  // }
+  // return Promise.resolve(user);
+};
 exports.getUserWithEmail = getUserWithEmail;
 
 /**
@@ -36,8 +42,12 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
-}
+  const userIdQuery = `SELECT * FROM users WHERE id = $1`;
+  return pool.query(userIdQuery, [id])
+    .then(resolve => resolve ? resolve.rows[0] : null)
+    .catch(err => console.err('Query error', err));
+  // return Promise.resolve(users[id]);
+};
 exports.getUserWithId = getUserWithId;
 
 
@@ -46,12 +56,21 @@ exports.getUserWithId = getUserWithId;
  * @param {{name: string, password: string, email: string}} user
  * @return {Promise<{}>} A promise to the user.
  */
-const addUser =  function(user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
-}
+const addUser = function(user) {
+  // const userId = Object.keys(users).length + 1;
+  // user.id = userId;
+  // users[userId] = user;
+  // return Promise.resolve(user);
+  const insertQuery = `
+  INSERT INTO users (name, password, email)
+  VALUES($1, $2, $3)
+  `;
+  const newUser = [user.name, user.password, user.email];
+  pool.query(insertQuery, newUser)
+    .then(resolve => console.log(resolve))
+    .catch(err => console.err('Query error', err));
+  return getUserWithEmail(user.email);
+};
 exports.addUser = addUser;
 
 /// Reservations
