@@ -182,27 +182,6 @@ exports.getAllProperties = getAllProperties;
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  // const keys = Object.keys(property).join(', ');
-  // const values = Object.values(property);//.join(', ');
-  // console.log(values);
-  //console.log("A list of keys:", keys, typeof(keys));
-  //console.log("A list of values:", values, typeof(values));
-  //const newList = [`(${keys})`, `(${values})`];
-  //console.log(newList);
-  // const queryString = `
-  // INSERT INTO properties $1
-  // VALUES $2
-  // RETURNING *;
-  // `;
-  // const queryString1 = `
-  // INSERT INTO properties
-  // (owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, street,
-  //  city, province, post_code, country, parking_spaces, number_of_bathrooms, number_of_bedrooms )
-  // VALUES
-  // ('123', 'propertyName', 'desc', 'thumburl', 'coverurl', '123', 'marine', 'vancouver', 'bc', '99999', 'canada', '1', '2', '3')
-  // RETURNING *;
-  // `;
-
   const queryString2 = `
   INSERT INTO properties
   (owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, street,
@@ -214,9 +193,5 @@ const addProperty = function(property) {
 
   return pool.query(queryString2, arrayData)
     .then(resolve => resolve.rows[0]); // make sure only 1 property object is returned to next func
-  // const propertyId = Object.keys(properties).length + 1;
-  // property.id = propertyId;
-  // properties[propertyId] = property;
-  // return Promise.resolve(property);
 };
 exports.addProperty = addProperty;
