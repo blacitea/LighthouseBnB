@@ -127,7 +127,7 @@ const getAllProperties = function(options, limit = 10) {
     } else {
       queryString += `WHERE`;
     }
-    queryString += ` owner_id != $${queryParams.length}`;
+    queryString += ` owner_id = $${queryParams.length}`;
   }
 
   // options - min.cost
