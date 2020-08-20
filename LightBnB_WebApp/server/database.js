@@ -64,12 +64,12 @@ const addUser = function(user) {
   const insertQuery = `
   INSERT INTO users (name, password, email)
   VALUES($1, $2, $3)
+  RETURNING *
   `;
   const newUser = [user.name, user.password, user.email];
-  pool.query(insertQuery, newUser)
-    .then(resolve => console.log(resolve))
+  return pool.query(insertQuery, newUser)
+    .then(resolve => resolve)
     .catch(err => console.err('Query error', err));
-  return getUserWithEmail(user.email);
 };
 exports.addUser = addUser;
 
@@ -81,8 +81,20 @@ exports.addUser = addUser;
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function(guest_id, limit = 10) {
-  return getAllProperties(null, 2);
-}
+  const reservationQuery = `
+  SELECT reservations.*, properties.*, AVG(rating) AS average_rating
+    FROM reservations
+    JOIN properties ON properties.id = property_id
+    JOIN property_reviews ON reservations.id = reservation_id
+    WHERE reservations.guest_id = $1 AND end_date < now()::date
+    GROUP BY reservations.id, properties.id
+    ORDER BY start_date
+    LIMIT $2;
+  `;
+  return pool.query(reservationQuery, [guest_id, limit])
+    .then(resolve => resolve.rows);
+  // return getAllProperties(null, 2);
+};
 exports.getAllReservations = getAllReservations;
 
 /// Properties
